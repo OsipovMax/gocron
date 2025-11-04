@@ -1273,12 +1273,13 @@ func (j job) RunNow() error {
 	resp := make(chan error, 1)
 
 	t := time.NewTimer(100 * time.Millisecond)
+	defer t.Stop()
+
 	select {
 	case j.runJobRequest <- runJobRequest{
 		id:      j.id,
 		outChan: resp,
 	}:
-		t.Stop()
 	case <-t.C:
 		return ErrJobRunNowFailed
 	}
